@@ -1,13 +1,8 @@
 import os
 import re
 import subprocess
-import smtplib
-import imghdr
-from email.message import EmailMessage
 import uuid
 import sys
-import json
-import urllib.request
 import requests
 
 MAC = ''
