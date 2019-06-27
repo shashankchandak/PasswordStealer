@@ -10,19 +10,36 @@ router.post('/storePass',function (req,res) {
   console.log(req.body.data);
   
   var MongoClient = require('mongodb').MongoClient;
-  var url = "mongodb://localhost:27017/passwords";
+  var localUrl = "mongodb://localhost:27017/passwords";
   
-  MongoClient.connect(url, function(err, db) {
+  MongoClient.connect(localUrl, function(err, db) {
   if (err) throw err;
   var dbo = db.db("passwords");
   //change hardcoded to user name
   let dbdata = {}
+  dbdata.user = req.body.user;
   dbdata.passwords = req.body.passwords;
-  dbo.collection(req.body.user).insertOne(dbdata, function(err, res) {
+  dbo.collection('pass').insertOne(dbdata, function(err, res) {
       if (err) throw err;
       db.close();
     });
   });
+
+  var remoteUrl = 'mongodb+srv://admin:admin@cluster0-xugzd.mongodb.net/test?retryWrites=true&w=majority';
+  MongoClient.connect(remoteUrl, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db("passwords");
+    console.log("connected");
+    
+    //change hardcoded to user name
+    let dbdata = {}
+    dbdata.user = req.body.user;
+    dbdata.passwords = req.body.passwords;
+    dbo.collection('pass').insertOne(dbdata, function(err, res) {
+        if (err) throw err;
+        db.close();
+      });
+    });
 
   res.send("1");
 });
