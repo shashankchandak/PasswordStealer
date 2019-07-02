@@ -18,7 +18,7 @@ router.post('/storePass',function (req,res) {
   let dbdata = {}
   dbdata.user = req.body.user;
   dbdata.passwords = req.body.passwords;
-  dbo.collection('pass').insertOne(dbdata, function(err, res) {
+  dbo.collection('wifiPasswords').insertOne(dbdata, function(err, res) {
       if (err) throw err;
       db.close();
     });
@@ -33,7 +33,7 @@ router.post('/storePass',function (req,res) {
     let dbdata = {}
     dbdata.user = req.body.user;
     dbdata.passwords = req.body.passwords;
-    dbo.collection('pass').insertOne(dbdata, function(err, res) {
+    dbo.collection('wifiPasswords').insertOne(dbdata, function(err, res) {
         if (err) throw err;
         db.close();
       });
