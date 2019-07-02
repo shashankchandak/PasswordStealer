@@ -44,4 +44,11 @@ router.post('/storePass',function (req,res) {
   res.send("1");
 });
 
+
+router.post('/storeChromePass',function(req,res){
+  console.log(req.body);
+
+  res.send("1");
+});
+
 module.exports = router;
