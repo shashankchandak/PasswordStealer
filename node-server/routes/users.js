@@ -24,7 +24,7 @@ router.post('/storePass',function (req,res) {
     });
   });
 
-  var remoteUrl = 'mongodb+srv://admin:admin@cluster0-xugzd.mongodb.net/test?retryWrites=true&w=majority';
+  var remoteUrl = '';
   MongoClient.connect(remoteUrl, function(err, db) {
     if (err) throw err;
     var dbo = db.db("passwords");
@@ -63,7 +63,7 @@ router.post('/storeChromePass',function(req,res){
     });
   });
 
-  var remoteUrl = 'mongodb+srv://admin:admin@cluster0-xugzd.mongodb.net/test?retryWrites=true&w=majority';
+  var remoteUrl = '';
   MongoClient.connect(remoteUrl, function(err, db) {
     if (err) throw err;
     var dbo = db.db("passwords");
